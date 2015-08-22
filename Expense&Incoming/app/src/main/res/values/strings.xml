@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Expense&amp;Incoming</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_activity_expense">ActivityExpense</string>
+    <string name="title_activity_activity_test">ActivityTest</string>
+    <string name="choose_date">Выберите дату</string>
+    <string name="ready">Готово</string>
+</resources>
