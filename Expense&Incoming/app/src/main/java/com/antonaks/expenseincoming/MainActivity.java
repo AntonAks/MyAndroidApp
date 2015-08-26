@@ -1,9 +1,12 @@
 package com.antonaks.expenseincoming;
 
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -21,6 +24,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.antonaks.expenseincoming.database.DBHelperExpense;
+import com.antonaks.expenseincoming.dialog.ExpenseInfo;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -29,6 +33,8 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 // идентификаторы полей контекстного меню
     private static final int CM_DELETE_ID = 1;
     private static final int CM_EDIT_ID = 2;
+    private static final int CM_INFO = 3;
+
 
     ListView listView;
 
@@ -72,6 +78,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(0, CM_EDIT_ID, 0, "Редактировать");
         menu.add(0, CM_DELETE_ID, 0, "Удалить");
+        menu.add(0,CM_INFO,0 ,"Информация");
     }
     // Создаем обработчик нажатия на поле меню
     @Override
@@ -93,6 +100,24 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         } else if (item.getItemId() == CM_EDIT_ID){
             Toast.makeText(MainActivity.this,"Редактирование пока не возможно",Toast.LENGTH_SHORT).show();
             getLoaderManager().getLoader(0).forceLoad();
+        }
+
+        else if (item.getItemId()==CM_INFO){
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle(R.string.dialog_info)
+                    .setMessage("Категория" + ":  \n" +
+                            "Комментарий" + ": \n" +
+                            "Сумма" + ": \n")
+                    .setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogInterface, int id) {
+                            dialogInterface.cancel();
+                        }
+                    });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
         }
 
         return super.onContextItemSelected(item);
