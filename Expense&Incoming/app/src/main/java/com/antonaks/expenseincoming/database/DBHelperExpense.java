@@ -58,8 +58,9 @@ public class DBHelperExpense extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     }
 
+
     // Метод добавляет запись в таблицу
-    public long record (SQLiteDatabase db, String date, String category, double sum, String comment){
+    public void record (SQLiteDatabase db, String date, String category, double sum, String comment){
 
         // Устанавливаем дату создания записи
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy  hh:mm");
@@ -83,7 +84,6 @@ public class DBHelperExpense extends SQLiteOpenHelper {
 
         db.insert(DB_EXP_TABLE,null,cv);
 
-        return year;
     }
 
     // Удаляет запись по ID
@@ -91,9 +91,22 @@ public class DBHelperExpense extends SQLiteOpenHelper {
         db.delete(DB_EXP_TABLE,COLUMN_ID + " = " + id, null);
     }
 
+    // Вернуть запись по ID
+    public Cursor querySelectedItem(SQLiteDatabase db, long id){
+
+        return db.query(DB_EXP_TABLE,
+                null,
+                COLUMN_ID + " = ?",
+                new String[]{Long.toString(id)},
+                null,
+                null,
+                null);
+    }
+
     // получить все данные из таблицы DB_EXP_TABLE (+ сортировка по дате)
     public Cursor getAllData(SQLiteDatabase db){
-        return db.query(DB_EXP_TABLE, null,
+        return db.query(DB_EXP_TABLE,
+                null,
                 null,
                 null,
                 null,

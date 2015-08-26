@@ -108,15 +108,15 @@ public class ActivityExpense extends Activity implements View.OnClickListener {
             try {
                 Double sum = Double.parseDouble(editTextSum.getText().toString());
             // вызвали метод для записи данных в базу
-            long id = dbHelperExpense.record(db,date,category,sum,comment);
+            dbHelperExpense.record(db,date,category,sum,comment);
             dbHelperExpense.close();
-            Toast.makeText(this, "Добавлена запись в категорию " + id, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.toast_add_exp), Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this,MainActivity.class);
             startActivity(intent);
             finish();
 
-            }catch (Exception e){Toast.makeText(this,"Внесите значение суммы",Toast.LENGTH_LONG).show();}
+            }catch (Exception e){Toast.makeText(this,getResources().getString(R.string.toast_sum_error),Toast.LENGTH_LONG).show();}
 
             break;
 

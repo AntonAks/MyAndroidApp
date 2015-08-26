@@ -6,12 +6,25 @@
     <string name="title_activity_activity_expense">ActivityExpense</string>
     <string name="title_activity_activity_test">ActivityTest</string>
 
-    <string name="choose_date">Выберите дату</string>
-    <string name="ready">Готово</string>
+    <string name="toast_delete_exp">Запись удалена</string>
+    <string name="toast_add_exp">Запись добавлена</string>
+    <string name="toast_save">Изменения добавлены</string>
+    <string name="toast_sum_error">Необходимо ввести сумму</string>
+    <string name="toast_error">Ошибка</string>
+
+    <string name="context_edit">Редактировать</string>
+    <string name="context_delete">Удалить</string>
+    <string name="context_info">Информация</string>
+
+    <string name="picker_choose_date">Выберите дату</string>
+    <string name="picker_ready">Готово</string>
 
     <string name="dialog_info">Информация по записи</string>
-    <string name="category">Категория</string>
-    <string name="sum">Сумма</string>
-    <string name="comment">Комментарий</string>
+    <string name="dialog_category">Категория</string>
+    <string name="dialog_sum">Сумма</string>
+    <string name="dialog_comment">Комментарий</string>
+    <string name="dialog_date_create">Создано</string>
+
+
 
 </resources>

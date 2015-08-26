@@ -2,7 +2,6 @@ package com.antonaks.expenseincoming;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -24,17 +23,15 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 import com.antonaks.expenseincoming.database.DBHelperExpense;
-import com.antonaks.expenseincoming.dialog.ExpenseInfo;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
 
-// идентификаторы полей контекстного меню
+    // идентификаторы полей контекстного меню
     private static final int CM_DELETE_ID = 1;
     private static final int CM_EDIT_ID = 2;
     private static final int CM_INFO = 3;
-
 
     ListView listView;
 
@@ -76,11 +73,12 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CM_EDIT_ID, 0, "Редактировать");
-        menu.add(0, CM_DELETE_ID, 0, "Удалить");
-        menu.add(0,CM_INFO,0 ,"Информация");
+        menu.add(0, CM_EDIT_ID, 0, getResources().getString(R.string.context_edit));
+        menu.add(0, CM_DELETE_ID, 0, getResources().getString(R.string.context_delete));
+        menu.add(0,CM_INFO,0 ,getResources().getString(R.string.context_info));
     }
-    // Создаем обработчик нажатия на поле меню
+
+    // Создаем обработчик нажатия на поле контекстного меню
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
@@ -89,26 +87,41 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         if (item.getItemId() == CM_DELETE_ID){
             // получаем из пункта контекстного меню данные по пункту списка
             AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-
             // извлекаем id записи и удаляем соответствующую запись в БД
             dbHelperExpense.delSelectedItem(db,adapterContextMenuInfo.id);
             // получаем новый курсор с данными
             getLoaderManager().getLoader(0).forceLoad();
 
-            Toast.makeText(MainActivity.this, "Запись удалена",Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_delete_exp),Toast.LENGTH_SHORT).show();
 
         } else if (item.getItemId() == CM_EDIT_ID){
-            Toast.makeText(MainActivity.this,"Редактирование пока не возможно",Toast.LENGTH_SHORT).show();
-            getLoaderManager().getLoader(0).forceLoad();
+            Toast.makeText(MainActivity.this, getResources().getString(R.string.toast_error), Toast.LENGTH_SHORT).show();
         }
 
-        else if (item.getItemId()==CM_INFO){
+        else if (item.getItemId() == CM_INFO){
+
+            String title1 = getResources().getString(R.string.dialog_category);
+            String title2 = getResources().getString(R.string.dialog_sum);
+            String title3 = getResources().getString(R.string.dialog_comment);
+            String title4 = getResources().getString(R.string.dialog_date_create);
+
+            // получаем из пункта контекстного меню данные по пункту списка
+            AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            // извлекаем id записи и удаляем соответствующую запись в БД
+            Cursor cursor = dbHelperExpense.querySelectedItem(db,adapterContextMenuInfo.id);
+            cursor.moveToFirst();
+
+            String value1 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_CATEGORY));
+            String value2 = String.valueOf(cursor.getDouble(cursor.getColumnIndex(dbHelperExpense.COLUMN_SUM)));
+            String value3 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_COMMENT));
+            String value4 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_CREATE_DATE));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(R.string.dialog_info)
-                    .setMessage("Категория" + ":  \n" +
-                            "Комментарий" + ": \n" +
-                            "Сумма" + ": \n")
+                    .setMessage(title1 + ":  " + value1 + "\n" +
+                            title2 + ":  " + value2 + "\n" +
+                            title3 + ":  " + value3 + "\n" +
+                            title4 + ":  " + value4)
                     .setNegativeButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialogInterface, int id) {
                             dialogInterface.cancel();
@@ -119,7 +132,6 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
             alertDialog.show();
 
         }
-
         return super.onContextItemSelected(item);
     }
 

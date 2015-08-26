@@ -33,7 +33,7 @@ public class Piker extends DialogFragment implements DatePickerDialog.OnDateSetL
 
         // создаем DatePickerDialog и возвращаем его
         Dialog picker = new DatePickerDialog(getActivity(), this, year, month, day);
-        picker.setTitle(getResources().getString(R.string.choose_date));
+        picker.setTitle(getResources().getString(R.string.picker_choose_date));
         return picker;
     }
 
@@ -42,7 +42,7 @@ public class Piker extends DialogFragment implements DatePickerDialog.OnDateSetL
         super.onStart();
         // добавляем кастомный текст для кнопки
         Button nButton =  ((AlertDialog) getDialog()).getButton(DialogInterface.BUTTON_POSITIVE);
-        nButton.setText(getResources().getString(R.string.ready));
+        nButton.setText(getResources().getString(R.string.picker_ready));
     }
 
     @Override
