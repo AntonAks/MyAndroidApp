@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.Arrays;
+
 /**
  * Created by AntonAks on 30.08.2015.
  * База данных для категорий затрат
@@ -14,6 +16,9 @@ public class DBCategory {
     private final Context context;
     private DBHelper dbHelper;
     private SQLiteDatabase database;
+
+    private final String DEFAULT_CATEGORIES [] = {"","Продукты", "Транспорт", "Подарки", "Бытовая Химия", "Медицина", "Мобильная связь", "Прочее"};
+
 
     // Имя базы данных, версия, и имя таблицы
     private static final String DB_CATEGORY_NAME = "database_category";
@@ -95,5 +100,15 @@ public class DBCategory {
         if (dbHelper !=null) dbHelper.close();
     }
 
+    public void resetCategory(){
+
+        database.delete(DB_CATEGORY_TABLE,null,null);
+        Arrays.sort(DEFAULT_CATEGORIES);
+
+        for (int i = 0; i < DEFAULT_CATEGORIES.length; i++) {
+            addNewCategory(DEFAULT_CATEGORIES[i]);
+        }
+
+    }
 
 }

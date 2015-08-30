@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -25,7 +27,6 @@ public class CategoryActivity extends FragmentActivity implements LoaderManager.
 
     // идентификаторы полей контекстного меню
     private static final int CM_DELETE_ID = 1;
-    private static final int CM_EDIT_ID = 2;
 
     ListView CategoryList;
     EditText editCategory;
@@ -50,7 +51,7 @@ public class CategoryActivity extends FragmentActivity implements LoaderManager.
         int[] to = new int[] { R.id.tvCategory};
 
         // создаем адаптер и настраиваем список
-        simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.sqlite_list, null, from, to, 0);
+        simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.category_list, null, from, to, 0);
         CategoryList.setAdapter(simpleCursorAdapter);
 
         // присваиваем контекстное меню для элементов списка
@@ -70,8 +71,19 @@ public class CategoryActivity extends FragmentActivity implements LoaderManager.
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CM_EDIT_ID, 0, getResources().getString(R.string.context_edit));
         menu.add(0, CM_DELETE_ID, 0, getResources().getString(R.string.context_delete));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        // получаем из пункта контекстного меню данные по пункту списка
+        AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        // извлекаем id записи и удаляем соответствующую запись в БД
+        dbCategory.delSelectedCategory(adapterContextMenuInfo.id);
+        getLoaderManager().getLoader(0).forceLoad();
+
+        return super.onContextItemSelected(item);
     }
 
     // Сохраняем категорию
@@ -82,9 +94,9 @@ public class CategoryActivity extends FragmentActivity implements LoaderManager.
         long id = dbCategory.addNewCategory(category);
         Cursor cursor = dbCategory.getCategoryById(id);
         cursor.moveToFirst();
-        String cat = cursor.getString(cursor.getColumnIndex(dbCategory.getColumnCategory())).toString();
-        Toast.makeText(this,"Создана новая кагегория затрат - " + cat,Toast.LENGTH_LONG).show();
-
+        String NewCategory = cursor.getString(cursor.getColumnIndex(dbCategory.getColumnCategory())).toString();
+        Toast.makeText(this,"Создана новая кагегория затрат - " + NewCategory,Toast.LENGTH_SHORT).show();
+        editCategory.setText("");
         getLoaderManager().getLoader(0).forceLoad();
     }
 
@@ -106,6 +118,13 @@ public class CategoryActivity extends FragmentActivity implements LoaderManager.
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    public void resetToDefault(View view) {
+        dbCategory.open();
+        dbCategory.resetCategory();
+        editCategory.setText("");
+        getLoaderManager().getLoader(0).forceLoad();
     }
 
 
