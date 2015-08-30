@@ -24,6 +24,7 @@
     <string name="dialog_sum">Сумма</string>
     <string name="dialog_comment">Комментарий</string>
     <string name="dialog_date_create">Создано</string>
+    <string name="title_activity_category">CategoryActivity</string>
 
 
 

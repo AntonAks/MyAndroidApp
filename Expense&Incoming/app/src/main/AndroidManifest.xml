@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityExpense"
+            android:name=".ExpenseActivity"
             android:label="@string/title_activity_activity_expense" >
             <intent-filter>
                 <action android:name="android.intent.action.ADD_EXPENSE" />
@@ -24,11 +24,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityTest"
+            android:name=".TestActivity"
             android:label="@string/title_activity_activity_test" >
             <intent-filter>
-                <action android:name="android.intent.action.TEST_ACTIVITY"></action>
-                <category android:name="android.intent.category.DEFAULT"></category>
+                <action android:name="android.intent.action.TEST_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CategoryActivity"
+            android:label="@string/title_activity_category" >
+            <intent-filter>
+                <action android:name="android.intent.action.CATEGORY_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
     </application>

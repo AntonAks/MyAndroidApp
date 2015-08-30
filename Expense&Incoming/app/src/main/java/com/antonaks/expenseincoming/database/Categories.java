@@ -10,8 +10,6 @@ public class Categories {
 
     private String [] expCategories = {"","Продукты", "Транспорт", "Подарки", "Обед", "Бытовая Химия"};
 
-
-
     public Categories() {
     }
 

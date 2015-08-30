@@ -9,7 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -22,11 +21,10 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-import com.antonaks.expenseincoming.database.DBHelperExpense;
+import com.antonaks.expenseincoming.database.DBExpense;
 
 @TargetApi(Build.VERSION_CODES.HONEYCOMB)
 public class MainActivity extends FragmentActivity implements LoaderManager.LoaderCallbacks<Cursor> {
-
 
     // идентификаторы полей контекстного меню
     private static final int CM_DELETE_ID = 1;
@@ -35,7 +33,7 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 
     ListView listView;
 
-    DBHelperExpense dbHelperExpense;
+    DBExpense dbExpense;
     SimpleCursorAdapter simpleCursorAdapter;
 
     @Override
@@ -44,15 +42,17 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         setContentView(R.layout.main_activity_layout);
 
         // открываем подключение к БД
-        dbHelperExpense = new DBHelperExpense(this);
+        dbExpense = new DBExpense(this);
+        dbExpense.open();
+
+        listView = (ListView) findViewById(R.id.lvCategory);
 
         // формируем столбцы сопоставления
-        String[] from = new String[] { dbHelperExpense.COLUMN_DATE, dbHelperExpense.COLUMN_CATEGORY,dbHelperExpense.COLUMN_SUM };
+        String[] from = new String[] { dbExpense.getColumnDate(), dbExpense.getColumnCategory(), dbExpense.getColumnSum() };
         int[] to = new int[] { R.id.tvText1, R.id.tvText2, R.id.tvText3 };
 
         // создаем адаптер и настраиваем список
         simpleCursorAdapter = new SimpleCursorAdapter(this, R.layout.sqlite_list, null, from, to, 0);
-        listView = (ListView) findViewById(R.id.lvExpense);
         listView.setAdapter(simpleCursorAdapter);
 
         // присваиваем контекстное меню для элементов списка
@@ -78,17 +78,17 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
         menu.add(0,CM_INFO,0 ,getResources().getString(R.string.context_info));
     }
 
-    // Создаем обработчик нажатия на поле контекстного меню
+    // Обрабатываем нажатие на поля контекстного меню
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 
-        SQLiteDatabase db = dbHelperExpense.getWritableDatabase();
+        dbExpense.open();
 
         if (item.getItemId() == CM_DELETE_ID){
             // получаем из пункта контекстного меню данные по пункту списка
             AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             // извлекаем id записи и удаляем соответствующую запись в БД
-            dbHelperExpense.delSelectedItem(db,adapterContextMenuInfo.id);
+            dbExpense.delSelectedItem(adapterContextMenuInfo.id);
             // получаем новый курсор с данными
             getLoaderManager().getLoader(0).forceLoad();
 
@@ -108,13 +108,13 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
             // получаем из пункта контекстного меню данные по пункту списка
             AdapterView.AdapterContextMenuInfo adapterContextMenuInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
             // извлекаем id записи и удаляем соответствующую запись в БД
-            Cursor cursor = dbHelperExpense.querySelectedItem(db,adapterContextMenuInfo.id);
+            Cursor cursor = dbExpense.querySelectedItem(adapterContextMenuInfo.id);
             cursor.moveToFirst();
 
-            String value1 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_CATEGORY));
-            String value2 = String.valueOf(cursor.getDouble(cursor.getColumnIndex(dbHelperExpense.COLUMN_SUM)));
-            String value3 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_COMMENT));
-            String value4 = cursor.getString(cursor.getColumnIndex(dbHelperExpense.COLUMN_CREATE_DATE));
+            String value1 = cursor.getString(cursor.getColumnIndex(dbExpense.getColumnCategory()));
+            Double value2 = cursor.getDouble(cursor.getColumnIndex(dbExpense.getColumnSum()));
+            String value3 = cursor.getString(cursor.getColumnIndex(dbExpense.getColumnComment()));
+            String value4 = cursor.getString(cursor.getColumnIndex(dbExpense.getColumnCreateDate()));
 
             AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
             builder.setTitle(R.string.dialog_info)
@@ -137,20 +137,20 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 
     // Переход в активность внесения затрат
     public void newExp(View view) {
-        Intent intent = new Intent(this,ActivityExpense.class);
+        Intent intent = new Intent(this,ExpenseActivity.class);
         startActivity(intent);
         finish();
     }
 
     // Переход в активность для тестирования
     public void testAct(View view) {
-        Intent intent = new Intent(this,ActivityTest.class);
+        Intent intent = new Intent(this,TestActivity.class);
         startActivity(intent);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new MyCursorLoader(this, dbHelperExpense);
+        return new MyCursorLoader(this, dbExpense);
     }
 
     @Override
@@ -165,16 +165,15 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
 
     static class MyCursorLoader extends CursorLoader{
 
-        DBHelperExpense dbHelperExpense;
+        DBExpense dbExpense;
 
-        public MyCursorLoader(Context context, DBHelperExpense dbHelperExpense) {
+        public MyCursorLoader(Context context, DBExpense dbExpense) {
             super(context);
-            this.dbHelperExpense = dbHelperExpense;
+            this.dbExpense = dbExpense;
         }
 
         public Cursor loadInBackground(){
-            SQLiteDatabase db = dbHelperExpense.getWritableDatabase();
-            Cursor cursor = dbHelperExpense.getAllData(db);
+            Cursor cursor = dbExpense.getAllData();
             return cursor;
         }
     }
@@ -183,6 +182,6 @@ public class MainActivity extends FragmentActivity implements LoaderManager.Load
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        dbHelperExpense.close();
+        dbExpense.close();
     }
 }

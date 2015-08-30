@@ -13,9 +13,9 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Exp"
+            android:text="Save"
             android:id="@+id/btnSaveCategory"
-            android:onClick="newExp"
+            android:onClick="onSaveCategory"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_weight="1" />
@@ -23,9 +23,9 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Test"
-            android:id="@+id/btnTest"
-            android:onClick="testAct"
+            android:text="Cancel"
+            android:id="@+id/btnCancel"
+            android:onClick="onCancel"
             android:layout_alignTop="@+id/btnSaveCategory"
             android:layout_toRightOf="@+id/btnSaveCategory"
             android:layout_toLeftOf="@+id/btnExit"
@@ -43,43 +43,13 @@
         android:layout_alignTop="@+id/lvCategory"
         android:layout_marginTop="10dp">
 
-        <TextView
-            android:id="@+id/tvText1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1"
-            android:text="Date"
-            android:textStyle="bold"
-            android:textSize="15sp">
-        </TextView>
-
-        <TextView
-            android:id="@+id/tvText2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1"
-            android:text="Category"
-            android:textStyle="bold"
-            android:textSize="15sp">
-        </TextView>
-
-        <TextView
-            android:id="@+id/tvText3"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="left"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="1"
-            android:text="Sum"
-            android:textStyle="bold"
-            android:textSize="15sp">
-        </TextView>
-
     </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editTextCategory"
+        android:hint="Введите новую категорию" />
 
     <ListView
         android:layout_width="match_parent"
